@@ -103,6 +103,11 @@ class JournalFamily(ABC):
         return self._order_param
 
     @property
+    def author_param(self) -> str:
+        """URL parameter noting results order"""
+        return self._author_param
+
+    @property
     def open_param(self) -> str:
         """URL parameter optionally noting open results only"""
         return self._open_param
@@ -364,11 +369,14 @@ class JournalFamily(ABC):
                                 year_param,
                                 self.journal_param + journal_value,
                                 self.order_param + order_value,
+                                self.author_param + 'reynolds',
                             ]
                         )
                         search_url_args.append(args)
             search_term_urls = [search_url + url_args for url_args in search_url_args]
             search_urls += search_term_urls
+            search_urls += 'https://www.nature.com/search?q=electrochromic%20polymer&date_range=&journal=&order=relevance&author=reynolds'
+        print('search url', search_urls)
         return search_urls
 
     def get_articles_from_search_url(self, search_url: str) -> list:
@@ -559,7 +567,7 @@ class JournalFamilyDynamic(JournalFamily):
         ]
         #print('search list',search_list)
         search_product = list(itertools.product(*search_list))
-        #print('search_product',search_product)
+        print('search_product',search_product)
         
 
         search_urls = []
@@ -587,14 +595,14 @@ class JournalFamilyDynamic(JournalFamily):
                                 year_param,
                                 self.journal_param + journal_value,
                                 self.order_param + order_value,
+                                self.author_param + 'reynolds',
                             ]
                         )
                         search_url_args.append(args)
             search_term_urls = [search_url + url_args for url_args in search_url_args]
             search_urls += search_term_urls
-            print('search url', search_urls)
-            
-            #self.driver.close()
+        
+        
         return search_urls
 
 
@@ -767,6 +775,7 @@ class JournalFamilyDynamic(JournalFamily):
         return figure_list
 
 
+
 # ############# JOURNAL FAMILY SPECIFIC INFORMATION ################
 # To add a new journal family, create a new subclass of
 # JournalFamily. Fill out the methods and attributes according to
@@ -800,7 +809,8 @@ class ACS(JournalFamilyDynamic):
     extra_key = "inline-fig internalNav"
     articles_path_length = 3
     max_query_results = 1000
-
+    
+    
     
     def get_page_info(self, url):
         options = Options()
@@ -810,8 +820,6 @@ class ACS(JournalFamilyDynamic):
         options.add_experimental_option('useAutomationExtension', False)
         options.add_argument("--no-sandbox") #bypass OS security model
         options.add_argument("--disable-dev-shm-usage") #overcome limited resource problems
-        options.add_experimental_option("excludeSwitches", ["enable-automation"])
-        options.add_experimental_option('useAutomationExtension', False)
         options.binary_location = "/gpfs/fs1/home/avriza/chrome/opt/google/chrome/google-chrome"
         driver = webdriver.Chrome(service=Service('/gpfs/fs1/home/avriza/chromedriver'), options=options)
         #driver = webdriver.Chrome( options=options)
@@ -841,6 +849,226 @@ class ACS(JournalFamilyDynamic):
         current_page = int(page_counter_list[0])
         total_pages = total_results // 20
         return current_page, total_pages, total_results
+
+
+    def get_articles_from_search_url(self, url):
+            """Generates a list of articles from a single search term"""
+            max_scraped = self.search_query["maximum_scraped"]
+            self.logger.info("GET request: {}".format(url))
+            
+            options = webdriver.ChromeOptions() 
+            options.add_argument("--no-sandbox") #bypass OS security model
+            options.add_argument("--disable-dev-shm-usage") #overcome limited resource problems
+            options.add_argument('--headless')
+            
+            #options.add_argument("start-maximized")
+            #options.add_experimental_option("excludeSwitches", ["enable-automation"])
+            #options.add_experimental_option('useAutomationExtension', False)
+            options.binary_location = "/gpfs/fs1/home/avriza/chrome/opt/google/chrome/google-chrome"
+            driver = webdriver.Chrome(service=Service('/gpfs/fs1/home/avriza/chromedriver'), options=options)
+    
+            stealth(driver,
+                  languages=["en-US", "en"],
+                  vendor="Google Inc.",
+                  platform="Win32",
+                  webgl_vendor="Intel Inc.",
+                  renderer="Intel Iris OpenGL Engine",
+                  fix_hairline=True,
+                  )
+            #print('journal url', url)
+            driver.get(url)
+            soup = BeautifulSoup(driver.page_source, 'html.parser')
+            #print(soup, 'soup')
+            
+            #time.sleep(2)
+            #self.driver.close()
+            start_page, stop_page, total_articles = self.get_page_info(url)
+            #print('search url', search_url)
+            article_paths = set()
+            
+            #raise NameError(
+            #        "journal family {0} is not defined"
+             #   )
+            for page_number in range(start_page, stop_page + 1):
+                
+                #print(soup.find_all("a", href=True))
+                for tag in soup.find_all("a", href=True):
+                    url = tag.attrs['href']
+                    url = url.split('?page=search')[0]
+                    #print(url)
+                    
+                    #url = tag.attrs["href"]
+                    #print(url)
+                    #self.logger.debug("Candidate Article: {}".format(url))
+                    #if (
+                    #    self.articles_path not in url
+                    #    or url.count("/") != self.articles_path_length
+                    #):
+                    #    # The url does not point to an article
+                    #    continue
+                    if url.split("/")[-1] in self.articles_visited or (
+                        self.open and not self.is_link_to_open_article(tag)
+                    ):
+                        # It is an article but we are not interested
+                        continue
+                    #self.logger.debug("Candidate Article: PASS")
+                    if url.startswith('/doi/full/') == True:
+                        article_paths.add(url)
+                    if url.startswith('/en/content/articlehtml/') == True:
+                        article_paths.add(url)
+                    if len(article_paths) >= max_scraped:
+                        return article_paths
+                # Get next page at end of loop since page 1 is obtained from
+                # search_url
+                search_url = self.turn_page(search_url, page_number + 1)
+                #print('new search url', search_url)
+            print('article_paths', article_paths)
+            return article_paths
+
+    def get_article_figures(self, url):
+        """
+        Get all figures from an article 
+        Args:
+            url: A url to a journal article
+        Returns:
+            A dict of figure_jsons from an article
+        """
+        options = webdriver.ChromeOptions() 
+        options.add_argument("--no-sandbox") #bypass OS security model
+        options.add_argument("--disable-dev-shm-usage") #overcome limited resource problems
+        options.add_argument('--headless')
+        options.binary_location = "/gpfs/fs1/home/avriza/chrome/opt/google/chrome/google-chrome"
+        driver = webdriver.Chrome(service=Service('/gpfs/fs1/home/avriza/chromedriver'), options=options)
+
+        stealth(driver,
+              languages=["en-US", "en"],
+              vendor="Google Inc.",
+              platform="Win32",
+              webgl_vendor="Intel Inc.",
+              renderer="Intel Iris OpenGL Engine",
+              fix_hairline=True,
+              )
+              
+        driver.get(url)
+        time.sleep(2)
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
+        is_open, license = self.get_license(soup)
+
+        html_directory = self.results_directory / "html"
+        os.makedirs(html_directory, exist_ok=True)
+        with open(html_directory / (url.split("/")[-1]+'.html'), "w", encoding='utf-8') as file:
+            file.write(str(soup))
+
+        figure_list = self.get_figure_list(url)
+        figures = 1
+        article_json = {}
+
+        # for figure in soup.find_all('figure'):
+        for figure in figure_list:
+            captions = self.find_captions(figure)
+
+            # acs captions are duplicated, one version with no captions
+            if len(captions) == 0:
+                continue
+
+            # initialize the figure's json
+            article_name = url.split("/")[-1]
+            figure_json = {"title": soup.find('title').get_text(), 
+                            "article_url" : url,
+                            "article_name" : article_name}
+
+            # get figure caption
+            figure_caption = ""
+            for caption in captions:
+                figure_caption += caption.get_text()
+            figure_json["full_caption"] = figure_caption
+
+            # Allocate entry for caption delimiter
+            figure_json["caption_delimiter"] = ""
+
+            # get figure url and name
+            if 'rsc' in url.split("."):
+                # for image_tag in figure.find_all("a", href=True):
+                for image_tag in [a for a in figure.find_all("a", href=True) if str(a).find(self.extra_key)>-1]:
+                    image_url = image_tag['href']
+            else:
+                image_tag = figure.find('img')
+                image_url = image_tag.get('src')
+
+            image_url = self.prepend + image_url.replace('_hi-res','')
+            if ":" not in image_url:
+                image_url = "https:" + image_url
+            figure_name = article_name + "_fig" + str(figures) + ".jpg"  #" +  image_url.split('.')[-1]
+            print('fig_name',figure_name)
+            print('im_url',image_url)
+            # save image info
+            figure_json["figure_name"] = figure_name
+            figure_json["image_url"] = image_url
+            figure_json["license"] = license
+            figure_json["open"] = is_open
+
+            # save figure as image
+            #self.save_figure(figure_name, image_url)
+            figures_directory = self.results_directory / "figures"
+            print('figures_directory', figures_directory)
+            out_file = figures_directory / figure_name
+            print('out_file', out_file)
+            #urllib.request.urlretrieve(image_url, out_file)
+            driver.get(image_url)
+            driver.save_screenshot(out_file)
+            
+            figure_path = (
+                pathlib.Path(self.search_query["name"]) / "figures" / figure_name
+            )                       
+            
+            figure_json["figure_path"] = str(figure_path)
+            figure_json["master_images"] = []
+            figure_json["unassigned"] = {
+                'master_images': [],
+                'dependent_images': [],
+                'inset_images': [],
+                'subfigure_labels': [],
+                'scale_bar_labels':[],
+                'scale_bar_lines': [],
+                'captions': []
+            }
+            # add all results
+            article_json[figure_name] = figure_json
+            # increment index
+            figures += 1
+        return article_json
+
+
+    def get_figure_list(self, url):
+        """
+        Returns list of figures in the givin url
+        Args:
+            url: a string, the url to be searched
+        Returns:
+            A list of all figures in the article as BeaustifulSoup Tag objects
+        """
+        options = webdriver.ChromeOptions() 
+        options.add_argument("--no-sandbox") #bypass OS security model
+        options.add_argument("--disable-dev-shm-usage") #overcome limited resource problems
+        options.add_argument('--headless')
+        options.binary_location = "/gpfs/fs1/home/avriza/chrome/opt/google/chrome/google-chrome"
+        driver = webdriver.Chrome(service=Service('/gpfs/fs1/home/avriza/chromedriver'), options=options)
+
+        stealth(driver,
+              languages=["en-US", "en"],
+              vendor="Google Inc.",
+              platform="Win32",
+              webgl_vendor="Intel Inc.",
+              renderer="Intel Iris OpenGL Engine",
+              fix_hairline=True,
+              )
+        driver.get(url)
+        time.sleep(2)
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
+        figure_list = [a for a in soup.find_all('figure') if str(a).find(self.extra_key)>-1]
+        return figure_list
+
+
 
     def get_additional_url_arguments(self, soup):
         # rsc allows unlimited results, so no need for additoinal args
@@ -891,6 +1119,7 @@ class Nature(JournalFamily):
     date_range_param = "date_range="
     journal_param = "journal="
     pub_type = ""
+    author_param = "author="
     # order options
     order_values = {"relevant": "relevance", "old": "date_asc", "recent": "date_desc"}
     # codes for journals most relevant to materials science
@@ -910,7 +1139,7 @@ class Nature(JournalFamily):
         "commsmat",
     ]
 
-    join = " "
+    join = "\"%20\"" #" "
     articles_path = "/articles/"
     articles_path_length = 2
     prepend = ""
@@ -991,6 +1220,7 @@ class Nature(JournalFamily):
             ]
             orderings = [self.order_values[self.order]]
         years = [""] + years
+        #author = 
         return years, journal_codes, orderings
 
     def get_license(self, soup):
@@ -1212,3 +1442,40 @@ class Wiley(JournalFamily):
         # Wiley allows filtering for search. Therefore, if self.open is
         # true, all results will be open.
         return self.open
+        
+        
+    def find_captions(self, figure):
+        return figure.find_all("span", class_="graphic_title")
+
+    def save_figure(self, figure_name, image_url):
+        figures_directory = self.results_directory / "figures"
+        out_file = figures_directory / figure_name
+        urllib.request.urlretrieve(image_url, out_file)
+
+    def get_license(self, soup):
+        """ Checks the article license and whether it is open access 
+        Args:
+            soup (a BeautifulSoup parse tree): representation of page html
+        Returns:
+            is_open (a bool): True if article is open
+            license (a string): Requried text of article license
+        """
+        return (False, "unknown")
+
+    def get_additional_url_arguments(self, soup):
+        # rsc allows unlimited results, so no need for additoinal args
+        return [""], [""], [""]
+
+    def is_link_to_open_article(self, tag):
+        return self.open
+    
+    def get_figure_subtrees(self, soup):
+        figure_subtrees = soup.find_all("div", "image_table")
+        return figure_subtrees
+
+    def get_figure_url(self, figure_subtree):
+        return self.prepend + figure_subtree.find("a", href=True)["href"]
+
+    def get_soup_from_request(self, url: str) -> BeautifulSoup:
+        return super().get_soup_from_request(url)
+

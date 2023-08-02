@@ -140,7 +140,8 @@ class Pipeline:
             if journal_scraper:
                 tools.append(JournalScraper(self.query_dict))
             if caption_distributor:
-                tools.append(CaptionDistributor(self.query_dict))
+                print('hi')
+                #tools.append(CaptionDistributor(self.query_dict))
             if figure_separator:
                 tools.append(FigureSeparator(self.query_dict))
         # run each ExsclaimTool on search query
