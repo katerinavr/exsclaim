@@ -41,7 +41,8 @@ try:
     from selenium.webdriver.chrome.service import Service
     from selenium.webdriver.common.action_chains import ActionChains
     from selenium.webdriver.common.keys import Keys
-    
+except:
+    pass
 
 class ExsclaimTool(ABC):
     def __init__(self, search_query):
@@ -755,7 +756,7 @@ class CaptionDistributor(ExsclaimTool):
                 "label": label,
                 "description": caption_dict[label],#["description"],
                 "keywords": caption.get_keywords(query , api, llm).split(', ') ,# eval(get_keywords(caption_dict[label], api, llm))['keywords'], #caption_dict[label]["keywords"],
-                "context": caption.get_context(query, documents,embeddings)
+                "context": caption.get_context(query, documents,embeddings),
                 "general": caption.get_keywords(caption.get_context(query, documents,embeddings), api, llm).split(', '),# get_general(caption_dict[label]),# caption_dict[label]["general"],
             }
             exsclaim_dict[figure_name]["unassigned"]["captions"].append(master_image)
