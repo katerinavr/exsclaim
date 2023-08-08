@@ -58,8 +58,7 @@ class CustomEncoder(json.JSONEncoder):
 
 def separate_captions(caption, api, llm):
   if llm=='gpt-3.5-turbo':
-    #print('tza')
-    
+   
     openai.api_key=api
     caption_prompt = f"Please separate the given full caption into the exact subcaptionsand format as a dictionary with keys the letter of each subcaption. \n{caption}"
   
@@ -127,21 +126,23 @@ def separate_captions(caption, api, llm):
 
 
 def get_keywords(caption, api, llm):
-  llm = ChatOpenAI(model_name='gpt-4', openai_api_key='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')
-  caption_prompt = f"You are an experienced material scientist. Summarize the text in keywords separated by comma. The keywords should be related to the materials used, characterization techniques, names of molecules or any other scientific related keyword. Do not halucinate or create content that does not exist in the provided text: {caption}"
-  openai.api_key=api
-  completion = openai.ChatCompletion.create(
-    model = llm,
+  if llm=='gpt-3.5-turbo':
+    openai.api_key=api
+    caption_prompt = f"You are an experienced material scientist. Summarize the text in keywords separated by comma. The keywords should be related to the materials used, characterization techniques, names of molecules or any other scientific related keyword. Do not halucinate or create content that does not exist in the provided text: {caption}"
+  
+    completion = openai.ChatCompletion.create(
+    model = 'gpt-3.5-turbo',
     messages = [
-      {'role': 'assistant', 'content': caption_prompt}
+        {'role': 'assistant', 'content': caption_prompt}
     ],
     temperature = 0
-  )
-  output_string = completion['choices'][0]['message']['content']
-  output_string = output_string.strip()
-  output_string = output_string.replace("\\", "\\\\")
-  output_string = output_string.replace("'", "\"")
-  output_string = remove_control_characters(output_string)
+    )
+
+    output_string = completion['choices'][0]['message']['content']
+    output_string = output_string.strip()
+    output_string = output_string.replace("\\", "\\\\")
+    output_string = output_string.replace("'", "\"")
+    output_string = remove_control_characters(output_string)
   return output_string
   
 
