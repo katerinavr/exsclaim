@@ -31,7 +31,7 @@ from langchain import PromptTemplate
 from langchain.document_loaders import UnstructuredHTMLLoader
 from langchain.embeddings import OpenAIEmbeddings
 import openai
-
+from langchain.chat_models import ChatOpenAI
 
 def get_context(query, documents, embeddings):
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=2048, chunk_overlap=100)
