@@ -29,6 +29,7 @@ from PIL import Image
 import numpy as np
 from bs4 import BeautifulSoup
 import time
+from langchain.embeddings import OpenAIEmbeddings
 try:
     from selenium_stealth import stealth
     from selenium import webdriver
@@ -737,15 +738,12 @@ class CaptionDistributor(ExsclaimTool):
 
         
     def _update_exsclaim(self,search_query,  exsclaim_dict, figure_name, delimiter, caption_dict):
+        from exsclaim import caption
         llm = search_query["llm"]
         api = search_query["openai_API"]
         exsclaim_dict[figure_name]["caption_delimiter"] = delimiter
         html_filename = exsclaim_dict[figure_name]["article_name"]
-        #openai_ef = embedding_functions.OpenAIEmbeddingFunction(
-        #            api_key="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",
-        #            model_name="gpt-3.5-turbo"
-        #        )
-        embeddings = embeddings = OpenAIEmbeddings( openai_api_key=api)# HuggingFaceEmbeddings(model_name='all-mpnet-base-v2')
+        embeddings = OpenAIEmbeddings( openai_api_key=api)
         loader = UnstructuredHTMLLoader(os.path.join( "output", search_query["name"], "html", f'{html_filename}.html'))
         documents = loader.load()
         #loader = UnstructuredHTMLLoader(os.pathjoin("exsclaim", "output", exsclaim_dict["name"], "html", f'{html_filename}.html'))
@@ -755,13 +753,11 @@ class CaptionDistributor(ExsclaimTool):
             master_image = {
                 "label": label,
                 "description": caption_dict[label],#["description"],
-                "keywords": caption.get_keywords(query , api, llm).split(', ') ,# eval(get_keywords(caption_dict[label], api, llm))['keywords'], #caption_dict[label]["keywords"],
-                "context": caption.get_context(query, documents,embeddings),
-                "general": caption.get_keywords(caption.get_context(query, documents,embeddings), api, llm).split(', '),# get_general(caption_dict[label]),# caption_dict[label]["general"],
+                "keywords": caption.get_keywords(query , api, llm).split(', ') ,
+               #"context": caption.get_context(query, documents,embeddings),
+               # "general": caption.get_keywords(caption.get_context(query, documents,embeddings), api, llm).split(', '),
             }
             exsclaim_dict[figure_name]["unassigned"]["captions"].append(master_image)
-            #exsclaim_dict[figure_name]["       "]["captions"].append(master_image)
-        #print(exsclaim_dict)
         return exsclaim_dict
 
     def _appendJSON(self, exsclaim_json, captions_distributed):
