@@ -182,64 +182,65 @@ class Pipeline:
         return self.exsclaim_dict
 
     def assign_captions(self, figure):
-        """Assigns all captions to master_images JSONs for single figure
+            """Assigns all captions to master_images JSONs for single figure
 
-        Args:
-            figure (dict): a Figure JSON
-        Returns:
-            masters (list of dicts): list of master_images JSONs
-            unassigned (dict): the updated unassigned JSON
-        """
-        unassigned = figure.get("unassigned", [])
-        masters = []
+            Args:
+                figure (dict): a Figure JSON
+            Returns:
+                masters (list of dicts): list of master_images JSONs
+                unassigned (dict): the updated unassigned JSON
+            """
+            unassigned = figure.get("unassigned", [])
+            masters = []
 
-        captions = unassigned.get("captions", {})
-        not_assigned = set([a["label"] for a in captions])
+            captions = unassigned.get("captions", {})
+            not_assigned = set([a["label"] for a in captions])
 
-        for index, master_image in enumerate(figure.get("master_images", [])):
-            label_json = master_image.get("subfigure_label", {})
-            subfigure_label = label_json.get("text", index)
-            # remove periods or commas from around subfigure label
-            processed_label = subfigure_label.replace(")", "")
-            processed_label = processed_label.replace("(", "")
-            processed_label = processed_label.replace(".", "")
-            paired = False
+            for index, master_image in enumerate(figure.get("master_images", [])):
+                label_json = master_image.get("subfigure_label", {})
+                subfigure_label = label_json.get("text", index)
+                # remove periods or commas from around subfigure label
+                processed_label = subfigure_label.replace(")", "")
+                processed_label = processed_label.replace("(", "")
+                processed_label = processed_label.replace(".", "")
+                paired = False
+                for caption_label in captions:
+                    # remove periods or commas from around caption label
+                    processed_caption_label = caption_label["label"].replace(")", "")
+                    processed_caption_label = processed_caption_label.replace("(", "")
+                    processed_caption_label = processed_caption_label.replace(".", "")
+                    # check if caption label and subfigure label match and caption label
+                    # has not already been matched
+                    if (
+                        processed_caption_label.lower() == processed_label.lower()
+                        and processed_caption_label.lower()
+                        in [a.lower() for a in not_assigned]
+                    ):
+                        print("caption_label" , caption_label["description"])
+                        master_image["caption"] = caption_label["description"].replace("\n", " ").strip()
+                        master_image["keywords"] = caption_label["keywords"]
+                        # master_image["general"] = caption_label["general"]
+                        masters.append(master_image)
+                        not_assigned.remove(caption_label["label"])
+                        # break to next master image if a pairing was found
+                        paired = True
+                        break
+                if paired:
+                    continue
+                # no pairing found, create empty fields
+                master_image["caption"] = master_image.get("caption", [])
+                master_image["keywords"] = master_image.get("keywords", [])
+                master_image["general"] = master_image.get("general", [])
+                masters.append(master_image)
+
+            # update unassigned captions
+            new_unassigned_captions = []
             for caption_label in captions:
-                # remove periods or commas from around caption label
-                processed_caption_label = caption_label["label"].replace(")", "")
-                processed_caption_label = processed_caption_label.replace("(", "")
-                processed_caption_label = processed_caption_label.replace(".", "")
-                # check if caption label and subfigure label match and caption label
-                # has not already been matched
-                if (
-                    processed_caption_label.lower() == processed_label.lower()
-                    and processed_caption_label.lower()
-                    in [a.lower() for a in not_assigned]
-                ):
-                    master_image["caption"] = caption_label["description"]
-                    master_image["keywords"] = caption_label["keywords"]
-                    master_image["general"] = caption_label["general"]
-                    masters.append(master_image)
-                    not_assigned.remove(caption_label["label"])
-                    # break to next master image if a pairing was found
-                    paired = True
-                    break
-            if paired:
-                continue
-            # no pairing found, create empty fields
-            master_image["caption"] = master_image.get("caption", [])
-            master_image["keywords"] = master_image.get("keywords", [])
-            master_image["general"] = master_image.get("general", [])
-            masters.append(master_image)
+                if caption_label["label"] in not_assigned:
+                    new_unassigned_captions.append(caption_label)
 
-        # update unassigned captions
-        new_unassigned_captions = []
-        for caption_label in captions:
-            if caption_label["label"] in not_assigned:
-                new_unassigned_captions.append(caption_label)
-
-        unassigned["captions"] = new_unassigned_captions
-        return masters, unassigned
+            unassigned["captions"] = new_unassigned_captions
+            return masters, unassigned
 
     def group_objects(self):
         """Pair captions with subfigures for each figure in exsclaim json"""
