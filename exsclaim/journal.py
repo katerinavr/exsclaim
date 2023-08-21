@@ -369,7 +369,6 @@ class JournalFamily(ABC):
                                 year_param,
                                 self.journal_param + journal_value,
                                 self.order_param + order_value,
-                                self.author_param + 'reynolds',
                             ]
                         )
                         search_url_args.append(args)
@@ -595,7 +594,6 @@ class JournalFamilyDynamic(JournalFamily):
                                 year_param,
                                 self.journal_param + journal_value,
                                 self.order_param + order_value,
-                                self.author_param + 'reynolds',
                             ]
                         )
                         search_url_args.append(args)
