@@ -1,15 +1,8 @@
 # -*- coding: utf-8 -*-
-import collections
-import difflib
-import itertools
 import json
-import numpy as np
 from .captions import interpret as interpret
-from .captions import lists
 from .captions import regex as regex
-from .utilities import files
 from langchain.vectorstores import Chroma
-from langchain.chains import RetrievalQA
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from langchain.llms import HuggingFacePipeline
 from langchain import PromptTemplate, LLMChain
