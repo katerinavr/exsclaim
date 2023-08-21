@@ -1076,7 +1076,7 @@ class ACS(JournalFamilyDynamic):
 
             #     # Convert the image back to PIL format and save the result
             #     img_pil = Image.fromarray(img)
-                img_pil.save(figure_path)
+                # img_pil.save(figure_path)
                 # print('image saved as: ' , figure_path)
 
         return article_json
