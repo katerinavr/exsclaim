@@ -958,9 +958,9 @@ class ACS(JournalFamilyDynamic):
         with open(html_directory / (url.split("/")[-1]+'.html'), "w", encoding='utf-8') as file:
             file.write(str(soup))
 
-        figure_list = self.get_figure_list(url)
+        figure_list = soup.find_all("figure") #self.get_figure_list(url)
    
-        # print('figure_list', figure_list)
+        print('figure_list', figure_list)
         figures = 1
         article_json = {}
 
