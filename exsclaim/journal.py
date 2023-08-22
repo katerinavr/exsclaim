@@ -959,15 +959,15 @@ class ACS(JournalFamilyDynamic):
             file.write(str(soup))
 
         figure_list = self.get_figure_list(url)
-        print('figure_list', figure_list)
+        # print('figure_list', figure_list)
         figures = 1
         article_json = {}
 
         # for figure in soup.find_all('figure'):
         for figure in figure_list:
-            caption_text = figure.find('div', class_='hlFld-FigureCaption caption')
-            captions = caption_text.p.text
-            # captions = figure.find_all("p")
+            # caption_text = figure.find('div', class_='hlFld-FigureCaption caption')
+            # captions = caption_text.p.text
+            captions = figure.find_all("p")
             print('captions', captions)
             figure_caption = ""
             for caption in captions:
