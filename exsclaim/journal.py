@@ -960,7 +960,9 @@ class ACS(JournalFamilyDynamic):
 
         figure_list = soup.find_all("figure") #self.get_figure_list(url)
    
-        print('figure_list', figure_list)
+        # print('figure_list', figure_list)
+        print('figure_list', figure_list.find_all("p"))
+        print('figure_list', figure_list.find_all('div', class_='hlFld-FigureCaption caption'))
         figures = 1
         article_json = {}
 
@@ -976,7 +978,7 @@ class ACS(JournalFamilyDynamic):
             print('figure', figure)
             print('hlFld-FigureCaption caption', figure.find('div', class_='hlFld-FigureCaption caption'))
             print('hlFld-FigureCaption caption', figure.find_all('div', class_='hlFld-FigureCaption caption'))
-            print(figure.find_all("p"))
+            
             # caption_text = figure.find('div', class_='hlFld-FigureCaption caption')
             # captions = caption_text.p.text
             captions = figure.find_all("p")
