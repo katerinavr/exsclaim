@@ -1117,7 +1117,7 @@ class ACS(JournalFamilyDynamic):
         driver.get(url)
         time.sleep(2)
         soup = BeautifulSoup(driver.page_source, 'html.parser')
-        figure_list = [a for a in soup.find_all('img') if str(a).find(self.extra_key)>-1]
+        figure_list = [a for a in soup.find_all('figure') if str(a).find(self.extra_key)>-1]
         return figure_list
 
 
