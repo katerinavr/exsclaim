@@ -950,6 +950,7 @@ class ACS(JournalFamilyDynamic):
         import random
         # time.sleep(random.randint(0, 20))
         soup = BeautifulSoup(driver.page_source, 'html.parser')
+        print('soup', soup)
         is_open, license = self.get_license(soup)
 
         html_directory = self.results_directory / "html"
@@ -1020,24 +1021,24 @@ class ACS(JournalFamilyDynamic):
             #urllib.request.urlretrieve(image_url, out_file)
             print('image_url', image_url)
             driver.get(image_url)
-            # driver.save_screenshot(out_file)
-            # # Load the image
-            # img = cv2.imread(figure_path, cv2.IMREAD_UNCHANGED)
+            driver.save_screenshot(out_file)
+            # Load the image
+            img = cv2.imread(figure_path, cv2.IMREAD_UNCHANGED)
 
-            # # Convert the image to RGBA (just in case the image is in another format)
-            # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGBA)
+            # Convert the image to RGBA (just in case the image is in another format)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGBA)
 
-            # # Define a 2D filter that will turn black (also shades close to black) pixels to transparent
-            # low = np.array([0, 0, 0, 0])
-            # high = np.array([50, 50, 50, 255])
+            # Define a 2D filter that will turn black (also shades close to black) pixels to transparent
+            low = np.array([0, 0, 0, 0])
+            high = np.array([50, 50, 50, 255])
 
-            # # Apply the mask (this will turn 'black' pixels to transparent)
-            # mask = cv2.inRange(img, low, high)
-            # img[mask > 0] = [0, 0, 0, 0]
+            # Apply the mask (this will turn 'black' pixels to transparent)
+            mask = cv2.inRange(img, low, high)
+            img[mask > 0] = [0, 0, 0, 0]
 
-            # # Convert the image back to PIL format and save the result
-            # img_pil = Image.fromarray(img)
-            # img_pil.save(figure_path)
+            # Convert the image back to PIL format and save the result
+            img_pil = Image.fromarray(img)
+            img_pil.save(figure_path)
 
             
             figure_path = (
@@ -1064,27 +1065,27 @@ class ACS(JournalFamilyDynamic):
             figure_path = os.path.join(figures_directory , figure_name)
 
             # with open(figure_path, 'wb') as out_file:
-            # time.sleep(random.randint(0, 10))
-            driver.save_screenshot(figure_path)
+            # # time.sleep(random.randint(0, 10))
+            #     driver.save_screenshot(figure_path)
 
-            # Load the image
-            img = cv2.imread(out_file, cv2.IMREAD_UNCHANGED)
+            #      # Load the image
+            #     img = cv2.imread(figure_path, cv2.IMREAD_UNCHANGED)
 
-            # Convert the image to RGBA (just in case the image is in another format)
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGBA)
+            #     # Convert the image to RGBA (just in case the image is in another format)
+            #     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGBA)
 
-            # Define a 2D filter that will turn black (also shades close to black) pixels to transparent
-            low = np.array([0, 0, 0, 0])
-            high = np.array([50, 50, 50, 255])
+            #     # Define a 2D filter that will turn black (also shades close to black) pixels to transparent
+            #     low = np.array([0, 0, 0, 0])
+            #     high = np.array([50, 50, 50, 255])
 
-            # Apply the mask (this will turn 'black' pixels to transparent)
-            mask = cv2.inRange(img, low, high)
-            img[mask > 0] = [0, 0, 0, 0]
+            #     # Apply the mask (this will turn 'black' pixels to transparent)
+            #     mask = cv2.inRange(img, low, high)
+            #     img[mask > 0] = [0, 0, 0, 0]
 
-            # Convert the image back to PIL format and save the result
-            img_pil = Image.fromarray(img)
-            img_pil.save(out_file)
-            # print('image saved as: ' , figure_path)
+            #     # Convert the image back to PIL format and save the result
+            #     img_pil = Image.fromarray(img)
+            #     img_pil.save(out_file)
+                # print('image saved as: ' , figure_path)
 
         return article_json
 
