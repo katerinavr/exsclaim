@@ -965,8 +965,9 @@ class ACS(JournalFamilyDynamic):
 
         # for figure in soup.find_all('figure'):
         for figure in figure_list:
-            # captions = self.find_captions(figure)
-            captions = figure.find_all("p")
+            caption_text = figure.find('div', class_='hlFld-FigureCaption caption')
+            captions = caption_text.p.text
+            # captions = figure.find_all("p")
             print('captions', captions)
             figure_caption = ""
             for caption in captions:
