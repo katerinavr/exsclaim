@@ -950,7 +950,7 @@ class ACS(JournalFamilyDynamic):
         import random
         # time.sleep(random.randint(0, 20))
         soup = BeautifulSoup(driver.page_source, 'html.parser')
-        print('soup', soup)
+        # print('soup', soup)
         is_open, license = self.get_license(soup)
 
         html_directory = self.results_directory / "html"
@@ -959,6 +959,7 @@ class ACS(JournalFamilyDynamic):
             file.write(str(soup))
 
         figure_list = self.get_figure_list(url)
+        print('figure_list', figure_list)
         figures = 1
         article_json = {}
 
