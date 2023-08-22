@@ -959,7 +959,7 @@ class ACS(JournalFamilyDynamic):
             file.write(str(soup))
 
         figure_list = self.get_figure_list(url)
-        print('figure_list', figure_list)
+        # print('figure_list', figure_list)
         figures = 1
         article_json = {}
 
@@ -967,7 +967,7 @@ class ACS(JournalFamilyDynamic):
         for figure in figure_list:
             # captions = self.find_captions(figure)
             captions = figure.find_all("p")
-
+            print('captions', captions)
             figure_caption = ""
             for caption in captions:
                     if caption is not None:
