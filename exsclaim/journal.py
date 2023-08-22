@@ -374,8 +374,8 @@ class JournalFamily(ABC):
                         search_url_args.append(args)
             search_term_urls = [search_url + url_args for url_args in search_url_args]
             search_urls += search_term_urls
-            search_urls += 'https://www.nature.com/search?q=electrochromic%20polymer&date_range=&journal=&order=relevance&author=reynolds'
-        print('search url', search_urls)
+            # search_urls += 'https://www.nature.com/search?q=electrochromic%20polymer&date_range=&journal=&order=relevance&author=reynolds'
+        # print('search url', search_urls)
         return search_urls
 
     def get_articles_from_search_url(self, search_url: str) -> list:
@@ -577,7 +577,7 @@ class JournalFamilyDynamic(JournalFamily):
             search_url = self.domain + self.search_path + self.pub_type + url_parameters
             if self.open:
                 search_url += "&" + self.open_param + "&"
-            print('search_url',search_url)
+            # print('search_url',search_url)
             self.driver.get(search_url)
             soup = BeautifulSoup(self.driver.page_source, 'html.parser')
             time.sleep(2)
