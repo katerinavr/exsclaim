@@ -963,11 +963,17 @@ class ACS(JournalFamilyDynamic):
 
         # for figure in soup.find_all('figure'):
         for figure in figure_list:
-            captions = self.find_captions(figure)
+            # captions = self.find_captions(figure)
+            captions = figure.find_all("p")
+
+            figure_caption = ""
+            for caption in captions:
+                    if caption is not None:
+                        figure_caption += caption.get_text()
 
             # acs captions are duplicated, one version with no captions
-            if len(captions) == 0:
-                continue
+            # if len(captions) == 0:
+            #     continue
 
             # initialize the figure's json
             article_name = url.split("/")[-1]
@@ -1108,7 +1114,7 @@ class ACS(JournalFamilyDynamic):
         driver.get(url)
         time.sleep(2)
         soup = BeautifulSoup(driver.page_source, 'html.parser')
-        figure_list = [a for a in soup.find_all('figure') if str(a).find(self.extra_key)>-1]
+        figure_list = [a for a in soup.find_all('img') if str(a).find(self.extra_key)>-1]
         return figure_list
 
 
