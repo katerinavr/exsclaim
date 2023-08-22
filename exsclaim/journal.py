@@ -948,7 +948,7 @@ class ACS(JournalFamilyDynamic):
               
         driver.get(url)
         import random
-        time.sleep(random.randint(0, 20))
+        # time.sleep(random.randint(0, 20))
         soup = BeautifulSoup(driver.page_source, 'html.parser')
         is_open, license = self.get_license(soup)
 
@@ -1064,7 +1064,7 @@ class ACS(JournalFamilyDynamic):
             figure_path = os.path.join(figures_directory , figure_name)
 
             # with open(figure_path, 'wb') as out_file:
-            time.sleep(random.randint(0, 10))
+            # time.sleep(random.randint(0, 10))
             driver.save_screenshot(figure_path)
 
             # Load the image
