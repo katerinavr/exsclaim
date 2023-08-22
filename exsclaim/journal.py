@@ -948,7 +948,8 @@ class ACS(JournalFamilyDynamic):
               )
               
         driver.get(url)
-        time.sleep(2)
+        import random
+        time.sleep(random.randint(0, 20))
         soup = BeautifulSoup(driver.page_source, 'html.parser')
         is_open, license = self.get_license(soup)
 
@@ -1003,8 +1004,8 @@ class ACS(JournalFamilyDynamic):
             if ":" not in image_url:
                 image_url = "https:" + image_url
             figure_name = article_name + "_fig" + str(figures) + ".jpg"  #" +  image_url.split('.')[-1]
-            print('fig_name',figure_name)
-            print('im_url',image_url)
+            # print('fig_name',figure_name)
+            # print('im_url',image_url)
             # save image info
             figure_json["figure_name"] = figure_name
             figure_json["image_url"] = image_url
@@ -1067,7 +1068,7 @@ class ACS(JournalFamilyDynamic):
                 driver.save_screenshot(figure_path)
 
                 # Load the image
-                img = cv2.imread(figure_path, cv2.IMREAD_UNCHANGED)
+                img = cv2.imread(out_file, cv2.IMREAD_UNCHANGED)
 
                 # Convert the image to RGBA (just in case the image is in another format)
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGBA)
@@ -1082,7 +1083,7 @@ class ACS(JournalFamilyDynamic):
 
                 # Convert the image back to PIL format and save the result
                 img_pil = Image.fromarray(img)
-                img_pil.save(figure_path)
+                img_pil.save(out_file)
                 # print('image saved as: ' , figure_path)
 
         return article_json
