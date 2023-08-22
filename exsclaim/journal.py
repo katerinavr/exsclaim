@@ -983,9 +983,9 @@ class ACS(JournalFamilyDynamic):
                             "article_name" : article_name}
 
             # get figure caption
-            figure_caption = ""
-            for caption in captions:
-                figure_caption += caption.get_text()
+            # figure_caption = ""
+            # for caption in captions:
+            #     figure_caption += caption.get_text()
             figure_json["full_caption"] = figure_caption
 
             # Allocate entry for caption delimiter
