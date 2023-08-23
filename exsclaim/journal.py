@@ -957,14 +957,24 @@ class ACS(JournalFamilyDynamic):
         time.sleep(wait_time / float(10))
         soup = BeautifulSoup(driver.page_source, 'html.parser')
         # print('soup', soup)
-        # is_open, license = self.get_license(soup)
+        is_open, license = self.get_license(soup)
 
         html_directory = self.results_directory / "html"
         os.makedirs(html_directory, exist_ok=True)
         with open(html_directory / (url.split("/")[-1]+'.html'), "w", encoding='utf-8') as file:
             file.write(str(soup))
 
-        figure_list = self.get_figure_list(url) #soup.find_all("figure") #
+        figure_list = soup.find_all("figure") # self.get_figure_list(url) #
+        soup = BeautifulSoup(figure_list, 'html.parser')
+        captions = []
+
+        # Find all the figcaption tags in the HTML content
+        figcaption_tags = soup.find_all('figcaption')
+
+        # Extract text from each figcaption tag and append to the captions list
+        for tag in figcaption_tags:
+            print(tag.get_text(strip=True))
+            captions.append(tag.get_text(strip=True))
         # Find all the figcaption tags in the HTML content
         # figcaption_tags = figure_list.find('figcaption')
 
