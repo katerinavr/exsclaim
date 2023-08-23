@@ -965,25 +965,26 @@ class ACS(JournalFamilyDynamic):
             file.write(str(soup))
 
         figure_list = self.get_figure_list(url) #soup.find_all("figure") #
-   
-        print('figure_list', figure_list)
-        print('figure_list1', figure_list.find("p"))
-        print('figure_list2', figure_list.find('div', class_='hlFld-FigureCaption caption'))
+        print('tza1')
+        # print('figure_list', figure_list)
+        # print('figure_list1', figure_list.find("p"))
+        # print('figure_list2', figure_list.find('div', class_='hlFld-FigureCaption caption'))
         figures = 1
         article_json = {}
 
         # for figure in soup.find_all('figure'):
         for figure in figure_list:
-            img_tags = figure.find_all("img")
-                #print(img_tags)
-            for img_tag in img_tags:
-                    img_url = img_tag.get("src")
-                    img_url = "https://pubs.acs.org" + img_url
-                    captions1 = figure.find_all("p")
-            print('cap_test', captions1) 
+            print('tza2')
+            # img_tags = figure.find_all("img")
+            #     #print(img_tags)
+            # for img_tag in img_tags:
+            #         img_url = img_tag.get("src")
+            #         img_url = "https://pubs.acs.org" + img_url
+            #         captions1 = figure.find_all("p")
+            # print('cap_test', captions1) 
             print('figure', figure)
-            print('hlFld-FigureCaption caption', figure.find('div', class_='hlFld-FigureCaption caption'))
-            print('hlFld-FigureCaption caption', figure.find_all('div', class_='hlFld-FigureCaption caption'))
+            # print('hlFld-FigureCaption caption', figure.find('div', class_='hlFld-FigureCaption caption'))
+            # print('hlFld-FigureCaption caption', figure.find_all('div', class_='hlFld-FigureCaption caption'))
             
             # caption_text = figure.find('div', class_='hlFld-FigureCaption caption')
             # captions = caption_text.p.text
