@@ -966,7 +966,7 @@ class ACS(JournalFamilyDynamic):
 
         figure_list = self.get_figure_list(url) #soup.find_all("figure") #
         # Find all the figcaption tags in the HTML content
-        figcaption_tags = figure_list.find_all('figcaption')
+        figcaption_tags = figure_list.find('figcaption')
 
         # Extract text from each figcaption tag and append to the captions list
         for tag in figcaption_tags:
