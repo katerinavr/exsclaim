@@ -965,16 +965,29 @@ class ACS(JournalFamilyDynamic):
             file.write(str(soup))
 
         figure_list = soup.find_all("figure") # self.get_figure_list(url) #
-        soup = BeautifulSoup(figure_list, 'html.parser')
         captions = []
 
+        for figure in figure_list:
+            soup = BeautifulSoup(figure, 'html.parser')
+            figcaption = soup.find('figcaption')
+            if figcaption:
+                captions.append(figcaption.get_text(strip=True))
+
+        # Print the captions
+        for caption in captions:
+            print(caption) 
+
+
+        # soup = BeautifulSoup(figure_list, 'html.parser')
+        # captions = []
+
         # Find all the figcaption tags in the HTML content
-        figcaption_tags = soup.find_all('figcaption')
+        # figcaption_tags = soup.find_all('figcaption')
 
         # Extract text from each figcaption tag and append to the captions list
-        for tag in figcaption_tags:
-            print(tag.get_text(strip=True))
-            captions.append(tag.get_text(strip=True))
+        # for tag in figcaption_tags:
+        #     print(tag.get_text(strip=True))
+        #     captions.append(tag.get_text(strip=True))
         # Find all the figcaption tags in the HTML content
         # figcaption_tags = figure_list.find('figcaption')
 
