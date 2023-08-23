@@ -579,9 +579,10 @@ class JournalFamilyDynamic(JournalFamily):
                 search_url += "&" + self.open_param + "&"
             # print('search_url',search_url)
             self.driver.get(search_url)
+            wait_time = float(random.randint(0, 50))
+            time.sleep(wait_time / float(10))
             soup = BeautifulSoup(self.driver.page_source, 'html.parser')
-            time.sleep(2)
-            
+             
             years, journal_codes, orderings = self.get_additional_url_arguments(soup)
             search_url_args = []
 
@@ -610,7 +611,8 @@ class JournalFamilyDynamic(JournalFamily):
         self.logger.info("GET request: {}".format(search_url))
         self.driver.get(search_url)
         
-        #time.sleep(2)
+        wait_time = float(random.randint(0, 50))
+        time.sleep(wait_time / float(10))
         #self.driver.close()
         start_page, stop_page, total_articles = self.get_page_info(search_url)
         #print('search url', search_url)
@@ -678,7 +680,8 @@ class JournalFamilyDynamic(JournalFamily):
         """
 
         self.driver.get(url)
-        time.sleep(2)
+        wait_time = float(random.randint(0, 50))
+        time.sleep(wait_time / float(10))
         soup = BeautifulSoup(self.driver.page_source, 'html.parser')
         is_open, license = self.get_license(soup)
 
@@ -767,7 +770,8 @@ class JournalFamilyDynamic(JournalFamily):
         """
 
         self.driver.get(url)
-        time.sleep(2)
+        wait_time = float(random.randint(0, 50))
+        time.sleep(wait_time / float(10))
         soup = BeautifulSoup(self.driver.page_source, 'html.parser')
         figure_list = [a for a in soup.find_all('figure') if str(a).find(self.extra_key)>-1]
         return figure_list
@@ -829,7 +833,8 @@ class ACS(JournalFamilyDynamic):
               fix_hairline=True,
               )
         driver.get(url)
-        #time.sleep(5)
+        wait_time = float(random.randint(0, 50))
+        time.sleep(wait_time / float(10))
       
         soup = BeautifulSoup(driver.page_source, 'html.parser')
         driver.close()
@@ -877,7 +882,8 @@ class ACS(JournalFamilyDynamic):
             soup = BeautifulSoup(driver.page_source, 'html.parser')
             #print(soup, 'soup')
             
-            #time.sleep(2)
+            wait_time = float(random.randint(0, 50))
+            time.sleep(wait_time / float(10))
             #self.driver.close()
             start_page, stop_page, total_articles = self.get_page_info(url)
             #print('search url', search_url)
@@ -947,8 +953,8 @@ class ACS(JournalFamilyDynamic):
               )
               
         driver.get(url)
-        import random
-        # time.sleep(random.randint(0, 20))
+        wait_time = float(random.randint(0, 50))
+        time.sleep(wait_time / float(10))
         soup = BeautifulSoup(driver.page_source, 'html.parser')
         # print('soup', soup)
         # is_open, license = self.get_license(soup)
@@ -958,11 +964,11 @@ class ACS(JournalFamilyDynamic):
         with open(html_directory / (url.split("/")[-1]+'.html'), "w", encoding='utf-8') as file:
             file.write(str(soup))
 
-        figure_list = soup.find_all("figure") #self.get_figure_list(url)
+        figure_list = self.get_figure_list(url) #soup.find_all("figure") #
    
         print('figure_list', figure_list)
-        print('figure_list1', figure_list.find_all("p"))
-        print('figure_list2', figure_list.find_all('div', class_='hlFld-FigureCaption caption'))
+        print('figure_list1', figure_list.find("p"))
+        print('figure_list2', figure_list.find('div', class_='hlFld-FigureCaption caption'))
         figures = 1
         article_json = {}
 
