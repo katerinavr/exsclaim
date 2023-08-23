@@ -968,7 +968,7 @@ class ACS(JournalFamilyDynamic):
         captions = []
 
         for figure in figure_list:
-            soup = BeautifulSoup(figure, 'html.parser')
+            soup = BeautifulSoup(figure, 'lxml')
             figcaption = soup.find('figcaption')
             if figcaption:
                 captions.append(figcaption.get_text(strip=True))
