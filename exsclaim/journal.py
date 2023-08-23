@@ -970,10 +970,10 @@ class ACS(JournalFamilyDynamic):
 
         # Extract text from each figcaption tag and append to the captions list
         for tag in figcaption_tags:
-            print('tza', tag.get_text(strip=True))
+            print('tza',tag.get_text(strip=True))
             # captions.append(tag.get_text(strip=True))
         print('tza1')
-        # print('figure_list', figure_list)
+        print('figure_list', figure_list)
         # print('figure_list1', figure_list.find("p"))
         # print('figure_list2', figure_list.find('div', class_='hlFld-FigureCaption caption'))
         figures = 1
