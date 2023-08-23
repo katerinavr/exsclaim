@@ -180,20 +180,20 @@ class JournalScraper(ExsclaimTool):
                 )
                 + article.split("/")[-1]
             )
-            try:
-                request = j_instance.domain + article
-                article_dict = j_instance.get_article_figures(request)
-                exsclaim_json = self._update_exsclaim(exsclaim_json, article_dict)
-                self.new_articles_visited.add(article)
-            except Exception:
-                # pass
-                exception_string = (
-                   "<!> ERROR: An exception occurred in"
-                   " JournalScraper on article: {}".format(article)
-                )
-                if self.print:
-                   Printer(exception_string + "\n")
-                self.logger.exception(exception_string)
+            # try:
+            request = j_instance.domain + article
+            article_dict = j_instance.get_article_figures(request)
+            exsclaim_json = self._update_exsclaim(exsclaim_json, article_dict)
+            self.new_articles_visited.add(article)
+            # except Exception:
+            #     # pass
+            #     exception_string = (
+            #        "<!> ERROR: An exception occurred in"
+            #        " JournalScraper on article: {}".format(article)
+            #     )
+            #     if self.print:
+            #        Printer(exception_string + "\n")
+            #     self.logger.exception(exception_string)
 
             # Save to file every N iterations (to accomodate restart scenarios)
             if counter % 1000 == 0:
