@@ -566,7 +566,7 @@ class JournalFamilyDynamic(JournalFamily):
         ]
         #print('search list',search_list)
         search_product = list(itertools.product(*search_list))
-        print('search_product',search_product)
+        # print('search_product',search_product)
         
 
         search_urls = []
@@ -951,7 +951,7 @@ class ACS(JournalFamilyDynamic):
         # time.sleep(random.randint(0, 20))
         soup = BeautifulSoup(driver.page_source, 'html.parser')
         # print('soup', soup)
-        is_open, license = self.get_license(soup)
+        # is_open, license = self.get_license(soup)
 
         html_directory = self.results_directory / "html"
         os.makedirs(html_directory, exist_ok=True)
@@ -960,9 +960,9 @@ class ACS(JournalFamilyDynamic):
 
         figure_list = soup.find_all("figure") #self.get_figure_list(url)
    
-        # print('figure_list', figure_list)
-        print('figure_list', figure_list.find_all("p"))
-        # print('figure_list', figure_list.find_all('div', class_='hlFld-FigureCaption caption'))
+        print('figure_list', figure_list)
+        print('figure_list1', figure_list.find_all("p"))
+        print('figure_list2', figure_list.find_all('div', class_='hlFld-FigureCaption caption'))
         figures = 1
         article_json = {}
 
