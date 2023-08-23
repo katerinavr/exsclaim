@@ -966,14 +966,14 @@ class ACS(JournalFamilyDynamic):
 
         figure_list = self.get_figure_list(url) #soup.find_all("figure") #
         # Find all the figcaption tags in the HTML content
-        figcaption_tags = figure_list.find('figcaption')
+        # figcaption_tags = figure_list.find('figcaption')
 
         # Extract text from each figcaption tag and append to the captions list
-        for tag in figcaption_tags:
-            print('tza',tag.get_text(strip=True))
-            # captions.append(tag.get_text(strip=True))
-        print('tza1')
-        print('figure_list', figure_list)
+        # for tag in figcaption_tags:
+        #     print('tza',tag.get_text(strip=True))
+        #     # captions.append(tag.get_text(strip=True))
+        # print('tza1')
+        # print('figure_list', figure_list)
         # print('figure_list1', figure_list.find("p"))
         # print('figure_list2', figure_list.find('div', class_='hlFld-FigureCaption caption'))
         figures = 1
@@ -981,7 +981,7 @@ class ACS(JournalFamilyDynamic):
 
         # for figure in soup.find_all('figure'):
         for figure in figure_list:
-            print('tza2')
+            # print('tza2')
             # img_tags = figure.find_all("img")
             #     #print(img_tags)
             # for img_tag in img_tags:
@@ -995,7 +995,7 @@ class ACS(JournalFamilyDynamic):
             
             # caption_text = figure.find('div', class_='hlFld-FigureCaption caption')
             # captions = caption_text.p.text
-            captions = figure.find_all("p")
+            captions = figure.find_all("figcaption")
             print('captions', captions)
             figure_caption = ""
             for caption in captions:
