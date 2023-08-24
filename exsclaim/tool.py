@@ -836,8 +836,8 @@ class CaptionDistributor(ExsclaimTool):
                 "label": label,
                 "description": caption_dict[label],#["description"],
                 "keywords": caption.get_keywords(query , api, llm).split(', ') ,
-               #"context": caption.get_context(query, documents,embeddings),
-               # "general": caption.get_keywords(caption.get_context(query, documents,embeddings), api, llm).split(', '),
+                "context": caption.get_context(query, documents,embeddings),
+                "general": caption.get_keywords(caption.get_context(query, documents,embeddings), api, llm).split(', '),
             }
             exsclaim_dict[figure_name]["unassigned"]["captions"].append(master_image)
         return exsclaim_dict

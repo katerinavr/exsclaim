@@ -107,7 +107,7 @@ def separate_captions(caption, api, llm):
 
 def get_keywords(caption, api, llm):
   llm = ChatOpenAI(model_name='gpt-3.5-turbo', openai_api_key=api)
-  caption_prompt = f"You are an experienced material scientist. Summarize the text in keywords separated by comma. The keywords should be related to the materials used, characterization techniques, names of molecules or any other scientific related keyword. Do not halucinate or create content that does not exist in the provided text: {caption}"
+  caption_prompt = f"You are an experienced material scientist. Summarize the text in a less than three keywords separated by comma. The keywords should be a broad and general description of the caption and can be related to the materials used, characterization techniques or any other scientific related keyword. Do not halucinate or create content that does not exist in the provided text: {caption}"
   openai.api_key=api
   completion = openai.ChatCompletion.create(
       model = 'gpt-3.5-turbo',
