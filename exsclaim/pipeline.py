@@ -230,7 +230,7 @@ class Pipeline:
                 # no pairing found, create empty fields
                 master_image["caption"] = master_image.get("caption", [])
                 master_image["keywords"] = master_image.get("keywords", [])
-                master_image["context"] = caption_label["context"]
+                master_image["context"] = caption_label.get("context",[])
                 master_image["general"] = master_image.get("general", [])
                 masters.append(master_image)
 
