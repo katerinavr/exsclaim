@@ -137,8 +137,8 @@ class Pipeline:
         # set default values
         if tools is None:
             tools = []
-            if journal_scraper:
-                tools.append(JournalScraper(self.query_dict))
+            # if journal_scraper:
+            #     tools.append(JournalScraper(self.query_dict))
             if caption_distributor:
                 tools.append(CaptionDistributor(self.query_dict))
             if figure_separator:
