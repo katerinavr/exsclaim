@@ -218,8 +218,8 @@ class Pipeline:
                         print("caption_label" , caption_label["description"])
                         master_image["caption"] = caption_label["description"].replace("\n", " ").strip()
                         master_image["keywords"] = caption_label["keywords"]
-                        master_image["context"] = caption_label["context"]
-                        master_image["general"] = caption_label["general"]
+                        # master_image["context"] = caption_label["context"]
+                        # master_image["general"] = caption_label["general"]
                         masters.append(master_image)
                         not_assigned.remove(caption_label["label"])
                         # break to next master image if a pairing was found
@@ -231,8 +231,8 @@ class Pipeline:
                 try: 
                     master_image["caption"] = master_image.get("caption", [])
                     master_image["keywords"] = master_image.get("keywords", [])
-                    master_image["context"] = caption_label.get("context",[])
-                    master_image["general"] = master_image.get("general", [])
+                    # master_image["context"] = caption_label.get("context",[])
+                    # master_image["general"] = master_image.get("general", [])
                     masters.append(master_image)
                 except:
                     pass
