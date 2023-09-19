@@ -533,6 +533,16 @@ class HTMLScraper(ExsclaimTool):
 
         # Extract figures from the HTML
         figures = self.extract_figures_from_html(soup)
+        unique_figures = []
+        unique_data_indices = set()
+
+        for figure in figures:
+          data_index = figure.get('data-index')
+          if data_index not in unique_data_indices:
+            unique_data_indices.add(data_index)
+            unique_figures.append(figure)
+        figures = unique_figures
+        
         article_json = {}
         figure_number = 1
 
