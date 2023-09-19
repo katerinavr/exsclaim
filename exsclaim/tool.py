@@ -553,6 +553,8 @@ class HTMLScraper(ExsclaimTool):
                 #print(img_tags)
               for img_tag in img_tags:
                     img_url = img_tag.get("src")
+                    img_url = img_url.replace("medium", "large")
+                    img_url = img_url.replace("gif", "jpeg")
                     img_url = "https://pubs.acs.org" + img_url
                     captions = figure.find_all("p")
 
