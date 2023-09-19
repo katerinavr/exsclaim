@@ -617,7 +617,7 @@ class Pipeline:
                     *subfigure_coords,
                     "\t".join(master_image["caption"]),
                     str(master_image["keywords"]).replace("[", "{").replace("]", "}"),
-                    str(master_image["general"]).replace("[", "{").replace("]", "}"),
+                    # str(master_image["general"]).replace("[", "{").replace("]", "}"),
                     figure_id,
                 ]
                 subfigure_rows.append(subfigure_row)
