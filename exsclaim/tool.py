@@ -242,11 +242,6 @@ class HTMLScraper(ExsclaimTool):
           options = webdriver.ChromeOptions()
           options.add_argument("--headless")
           options.add_argument("--no-sandbox")
-          # options = Options()
-          # options.add_argument('--headless')
-          # options.add_argument('--no-sandbox')
-          # options.add_argument('--disable-dev-shm-usage')
-          # options.add_argument("--remote-debugging-port=9222")
           options.binary_location = "/gpfs/fs1/home/avriza/chrome/opt/google/chrome/google-chrome"
           self.driver = webdriver.Chrome(service=Service('/gpfs/fs1/home/avriza/chromedriver'), options=options)
           stealth(self.driver,
@@ -285,6 +280,17 @@ class HTMLScraper(ExsclaimTool):
 
         # Extract figures from the HTML
         figures = self.extract_figures_from_html_rsc(soup)
+        unique_figures = []
+        unique_data_indices = set()
+
+        # Remove the duplicated from ACS find_all
+        for figure in figures:
+          data_index = figure.get('data-index')
+          if data_index not in unique_data_indices:
+            unique_data_indices.add(data_index)
+            unique_figures.append(figure)
+        figures = unique_figures
+
         article_json = {}
         figure_number = 1
 

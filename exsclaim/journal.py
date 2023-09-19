@@ -1026,8 +1026,8 @@ class ACS(JournalFamilyDynamic):
                         figure_caption += caption.get_text()
             print('figure_caption', figure_caption)
             # acs captions are duplicated, one version with no captions
-            # if len(captions) == 0:
-            #     continue
+            if len(captions) == 0:
+                continue
 
             # initialize the figure's json
             article_name = url.split("/")[-1]
