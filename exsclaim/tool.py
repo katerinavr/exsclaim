@@ -324,6 +324,8 @@ class HTMLScraper(ExsclaimTool):
                           "full_caption": figure_caption,
                           "figure_path": str(figure_path),
                           "master_images": [],
+                          "license": [],
+                          "open": [],
                           "unassigned": {
                               "master_images": [],
                               "dependent_images": [],
@@ -470,6 +472,8 @@ class HTMLScraper(ExsclaimTool):
                   "full_caption": figure_caption,
                   "figure_path": str(figure_path),
                   "master_images": [],
+                  "license": [],
+                  "open": [],
                   "unassigned": {
                       "master_images": [],
                       "dependent_images": [],
@@ -562,6 +566,8 @@ class HTMLScraper(ExsclaimTool):
                           "full_caption": figure_caption,
                           "figure_path": str(figure_path),
                           "master_images": [],
+                          "license": [],
+                          "open": [],
                           "unassigned": {
                               "master_images": [],
                               "dependent_images": [],

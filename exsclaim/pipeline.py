@@ -12,7 +12,7 @@ from PIL import Image, ImageDraw, ImageFont
 from exsclaim.utilities.logging import Printer
 
 from .figure import FigureSeparator
-from .tool import CaptionDistributor, JournalScraper
+from .tool import CaptionDistributor, JournalScraper, HTMLScraper
 from .utilities import boxes, paths
 
 
@@ -86,6 +86,8 @@ class Pipeline:
         figure_separator=True,
         caption_distributor=True,
         journal_scraper=True,
+        html_scraper=True,
+        driver = None
     ):
         """Run EXSCLAIM pipeline on Pipeline instance's query path
 
@@ -139,6 +141,8 @@ class Pipeline:
             tools = []
             if journal_scraper:
                 tools.append(JournalScraper(self.query_dict))
+            if html_scraper:
+               tools.append(HTMLScraper(self.query_dict, driver))
             if caption_distributor:
                 tools.append(CaptionDistributor(self.query_dict))
             if figure_separator:
