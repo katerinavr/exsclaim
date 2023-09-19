@@ -324,6 +324,7 @@ class HTMLScraper(ExsclaimTool):
                           "full_caption": figure_caption,
                           "figure_path": str(figure_path),
                           "master_images": [],
+                          "article_url":[],
                           "license": [],
                           "open": [],
                           "unassigned": {
@@ -472,6 +473,7 @@ class HTMLScraper(ExsclaimTool):
                   "full_caption": figure_caption,
                   "figure_path": str(figure_path),
                   "master_images": [],
+                  "article_url":[],
                   "license": [],
                   "open": [],
                   "unassigned": {
@@ -542,7 +544,7 @@ class HTMLScraper(ExsclaimTool):
             unique_data_indices.add(data_index)
             unique_figures.append(figure)
         figures = unique_figures
-        
+
         article_json = {}
         figure_number = 1
 
@@ -576,6 +578,7 @@ class HTMLScraper(ExsclaimTool):
                           "full_caption": figure_caption,
                           "figure_path": str(figure_path),
                           "master_images": [],
+                          "article_url":[],
                           "license": [],
                           "open": [],
                           "unassigned": {
@@ -669,6 +672,9 @@ class HTMLScraper(ExsclaimTool):
                           "full_caption": figure_caption,
                           "figure_path": str(figure_path),
                           "master_images": [],
+                          "article_url":[],
+                          "license": [],
+                          "open": [],
                           "unassigned": {
                               "master_images": [],
                               "dependent_images": [],
