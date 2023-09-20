@@ -402,7 +402,7 @@ class HTMLScraper(ExsclaimTool):
 
           if img_tags is not None:
             img_url = 'https://onlinelibrary.wiley.com' + img_tags
-            # driver.get(img_url)
+            self.driver.get(img_url)
 
             # Extract caption
             figure_caption = ""
