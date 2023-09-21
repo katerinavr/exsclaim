@@ -28,7 +28,6 @@ import numpy as np
 from PIL import Image
 import numpy as np
 from bs4 import BeautifulSoup
-import time
 from langchain.embeddings import OpenAIEmbeddings
 
 try:
@@ -278,94 +277,76 @@ class HTMLScraper(ExsclaimTool):
         else:
           article_name = filename.split(".")[0]
 
-        # Extract figures from the HTML
-        figures = self.extract_figures_from_html_rsc(soup)
-        unique_figures = []
-        unique_data_indices = set()
 
-        # Remove the duplicated from ACS find_all
-        for figure in figures:
-          data_index = figure.get('data-index')
-          if data_index not in unique_data_indices:
-            unique_data_indices.add(data_index)
-            unique_figures.append(figure)
-        figures = unique_figures
-
+        figures = soup.find_all('div', class_='img-tbl')
         article_json = {}
         figure_number = 1
 
         for figure in figures:
-            img_tags = figure.get('src')
-            if img_tags.startswith('/image') == True:
-                    img_url = 'https://pubs.rsc.org/' + img_tags
-                    # print(img_url)
+            img_url =  figure.find('a')['href']
 
-                    captions = figure.find_all("p")
-
-                    figure_caption = ""
-                    for caption in captions:
-                      if caption is not None:
-                        figure_caption += caption.get_text()
-                    if img_url is not None:
-                      self.driver.get(img_url)
+            figure_caption=  figure.find('figcaption').get_text(strip=True)
 
 
-                      figure_name = article_name + "_fig" + str(figure_number) + ".png"
-                      figure_path = (
-                        pathlib.Path("output")  / "figures" / figure_name
-                      )
+            if img_url is not None:
+                self.driver.get(img_url)
 
-                      # initialize the figure's json
-                      figure_json = {
-                          "title": soup.find("title").get_text(),
-                          "article_name": article_name,
-                          "image_url": image_url,
-                          "figure_name": figure_name,
-                          "full_caption": figure_caption,
-                          "figure_path": str(figure_path),
-                          "master_images": [],
-                          "article_url":[],
-                          "license": [],
-                          "open": [],
-                          "unassigned": {
-                              "master_images": [],
-                              "dependent_images": [],
-                              "inset_images": [],
-                              "subfigure_labels": [],
-                              "scale_bar_labels": [],
-                              "scale_bar_lines": [],
-                              "captions": [],
-                          },
-                      }
-                      # add all results
-                      article_json[figure_name] = figure_json
-                      figure_number += 1  # increment figure number
-                      # Open a file with write binary mode, and write to it
-                      figures_directory = self.results_directory / "figures"
-                      figure_path = os.path.join(figures_directory , figure_name)
+            figure_name = article_name + "_fig" + str(figure_number) + ".png"
+            figure_path = (
+            pathlib.Path("output")  / "figures" / figure_name
+            )
 
-                      with open(figure_path, 'wb') as out_file:
-                        time.sleep(3)
-                        self.driver.save_screenshot(figure_path)
+            # initialize the figure's json
+            figure_json = {
+                "title": soup.find("title").get_text(),
+                "article_name": article_name,
+                "image_url": image_url,
+                "figure_name": figure_name,
+                "full_caption": figure_caption,
+                "figure_path": str(figure_path),
+                "master_images": [],
+                "article_url":[],
+                "license": [],
+                "open": [],
+                "unassigned": {
+                    "master_images": [],
+                    "dependent_images": [],
+                    "inset_images": [],
+                    "subfigure_labels": [],
+                    "scale_bar_labels": [],
+                    "scale_bar_lines": [],
+                    "captions": [],
+                },
+            }
+            # add all results
+            article_json[figure_name] = figure_json
+            figure_number += 1  # increment figure number
+            # Open a file with write binary mode, and write to it
+            figures_directory = '/content/test_rsc'
+            figure_path = os.path.join(figures_directory , figure_name)
 
-                        # Load the image
-                        img = cv2.imread(figure_path, cv2.IMREAD_UNCHANGED)
+            with open(figure_path, 'wb') as out_file:
+                time.sleep(3)
+                self.driver.save_screenshot(figure_path)
 
-                        # Convert the image to RGBA (just in case the image is in another format)
-                        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGBA)
+                # Load the image
+                img = cv2.imread(figure_path, cv2.IMREAD_UNCHANGED)
 
-                        # Define a 2D filter that will turn black (also shades close to black) pixels to transparent
-                        low = np.array([0, 0, 0, 0])
-                        high = np.array([50, 50, 50, 255])
+                # Convert the image to RGBA (just in case the image is in another format)
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGBA)
 
-                        # Apply the mask (this will turn 'black' pixels to transparent)
-                        mask = cv2.inRange(img, low, high)
-                        img[mask > 0] = [0, 0, 0, 0]
+                # Define a 2D filter that will turn black (also shades close to black) pixels to transparent
+                low = np.array([0, 0, 0, 0])
+                high = np.array([50, 50, 50, 255])
 
-                        # Convert the image back to PIL format and save the result
-                        img_pil = Image.fromarray(img)
-                        img_pil.save(figure_path)
-                        print('image saved as: ' , figure_path)
+                # Apply the mask (this will turn 'black' pixels to transparent)
+                mask = cv2.inRange(img, low, high)
+                img[mask > 0] = [0, 0, 0, 0]
+
+                # Convert the image back to PIL format and save the result
+                img_pil = Image.fromarray(img)
+                img_pil.save(figure_path)
+                print('image saved as: ' , figure_path)
         return article_json
 
 
