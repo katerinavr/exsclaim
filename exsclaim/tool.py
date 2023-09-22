@@ -283,7 +283,12 @@ class HTMLScraper(ExsclaimTool):
         figure_number = 1
 
         for figure in figures:
-            img_url =  figure.find('a')['href']
+            try:
+                img_url =  figure.find('a')['href']        
+            
+            except:
+                img_tags = figure.find('img')['data-original']
+                img_url = 'https://pubs.rsc.org/' + img_tags
 
             figure_caption=  figure.find('figcaption').get_text(strip=True)
 
