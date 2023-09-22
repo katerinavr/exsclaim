@@ -851,7 +851,7 @@ class CaptionDistributor(ExsclaimTool):
             master_image = {
                 "label": label,
                 "description": caption_dict[label],#["description"],
-                "keywords": caption.get_keywords(query , api, llm).split(', ') ,
+                "keywords": caption.safe_summarize_caption(query , api, llm).split(', ') ,
                 # "context": caption.get_context(query, documents,embeddings),
                 # "general": caption.get_keywords(caption.get_context(query, documents,embeddings), api, llm).split(', '),
             }
@@ -917,7 +917,7 @@ class CaptionDistributor(ExsclaimTool):
                 #print('llm', llm)
                 api = search_query["openai_API"]
                 #print('api',api)
-                caption_dict = caption.separate_captions(caption_text, api, llm='gpt-3.5-turbo')# caption.associate_caption_text( # here add the gpt3 code separate_captions(caption_text) #
+                caption_dict = caption.safe_separate_captions(caption_text, api, llm='gpt-3.5-turbo')# caption.associate_caption_text( # here add the gpt3 code separate_captions(caption_text) #
                   #  model, caption_text, search_query["query"]
                 #)
                 #print('full caption dict', caption_dict )
