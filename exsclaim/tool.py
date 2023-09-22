@@ -322,7 +322,7 @@ class HTMLScraper(ExsclaimTool):
             article_json[figure_name] = figure_json
             figure_number += 1  # increment figure number
             # Open a file with write binary mode, and write to it
-            figures_directory = '/content/test_rsc'
+            figures_directory = self.results_directory / "figures"
             figure_path = os.path.join(figures_directory , figure_name)
 
             with open(figure_path, 'wb') as out_file:
