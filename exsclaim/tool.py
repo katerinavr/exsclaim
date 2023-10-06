@@ -852,7 +852,7 @@ class CaptionDistributor(ExsclaimTool):
                 "label": label,
                 "description": caption_dict[label],#["description"],
                 "keywords": caption.safe_summarize_caption(query , api, llm).split(', ') ,
-                # "context": caption.get_context(query, documents,embeddings),
+                "context": caption.get_context(query, documents,embeddings),
                 # "general": caption.get_keywords(caption.get_context(query, documents,embeddings), api, llm).split(', '),
             }
             exsclaim_dict[figure_name]["unassigned"]["captions"].append(master_image)

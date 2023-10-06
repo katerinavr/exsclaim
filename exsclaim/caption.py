@@ -125,14 +125,33 @@ def get_keywords(caption, api, llm):
 
   
 def safe_summarize_caption(*args, **kwargs):
-    """Safely call the summarize_caption function with exponential backoff."""
+    """Safely call the get_keywords function with exponential backoff."""
     max_retries = 5
     base_wait_time = 2  # starting with 2 seconds
 
     for attempt in range(max_retries):
         try:
-            # Attempt to call the summarize function
+            # Attempt to call the get_keywords function
             return get_keywords(*args, **kwargs)
+        except Exception as e:
+            if attempt < max_retries - 1:  # if it's not the last attempt
+                wait_time = base_wait_time * (2 ** attempt)  # double the wait time with every retry
+                print(f"Error: {e}. Retrying in {wait_time} seconds...")
+                time.sleep(wait_time)
+            else:
+                # If we've reached the maximum retries, raise the exception
+                print("Max retries reached. Skipping this caption.")
+                return None  # or return a default value, or raise the exception
+            
+def safe_separate_captions(*args, **kwargs):
+    """Safely call the get_keywords function with exponential backoff."""
+    max_retries = 5
+    base_wait_time = 2  # starting with 2 seconds
+
+    for attempt in range(max_retries):
+        try:
+            # Attempt to call the get_keywords function
+            return separate_captions(*args, **kwargs)
         except Exception as e:
             if attempt < max_retries - 1:  # if it's not the last attempt
                 wait_time = base_wait_time * (2 ** attempt)  # double the wait time with every retry
