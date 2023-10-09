@@ -941,7 +941,7 @@ class CaptionDistributor(ExsclaimTool):
                     )
                 )
             # Save to file every N iterations (to accomodate restart scenarios)
-            if counter % 1000 == 0:
+            if counter % 100 == 0:
                 self._appendJSON(exsclaim_json, new_captions_distributed)
                 new_captions_distributed = set()
             counter += 1
