@@ -19,15 +19,9 @@ from dateutil.relativedelta import relativedelta
 try:
     from selenium_stealth import stealth
     from selenium import webdriver
-    from selenium.common.exceptions import TimeoutException
-    from selenium.webdriver.common.by import By
     from selenium.webdriver.support import expected_conditions as EC
-    from selenium.webdriver.support.ui import WebDriverWait
-    from webdriver_manager.chrome import ChromeDriverManager
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.chrome.service import Service
-    from selenium.webdriver.common.action_chains import ActionChains
-    from selenium.webdriver.common.keys import Keys
 
 except ImportError:
     pass
@@ -1274,7 +1268,7 @@ class Nature(JournalFamily):
             # returns None
             info = page.strip().split()
             if len(info) != 2 or info[0] != 'page':
-                raise ValueError(f'Info {info} should be of the format "page i"')
+                raise ValueError(f"Info {info} should be of the format 'page i'")
             
             return int(info[1])
         
@@ -1290,7 +1284,7 @@ class Nature(JournalFamily):
 
         if soup.find(attrs={'data-test': 'results-data'}) == None:
             #pass
-            raise ValueError(f'No articles were found, try to modily the search criteria')
+            raise ValueError(f"No articles were found, try to modily the search criteria")
 
         try:
             total_results = int(soup.find(attrs={'data-test': 'results-data'}).text.split()[-2])
