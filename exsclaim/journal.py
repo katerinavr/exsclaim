@@ -1458,91 +1458,91 @@ class RSC(JournalFamilyDynamic):
     def get_soup_from_request(self, url: str) -> BeautifulSoup:
         return super().get_soup_from_request(url)
     
-    def get_article_figures(self, url):
+    # def get_article_figures(self, url):
 
-        self.driver.get(url)
-        time.sleep(2)
-        soup = BeautifulSoup(self.driver.page_source, 'html.parser')
+    #     self.driver.get(url)
+    #     time.sleep(2)
+    #     soup = BeautifulSoup(self.driver.page_source, 'html.parser')
 
-        html_directory = self.results_directory / "html"
-        os.makedirs(html_directory, exist_ok=True)
-        with open(html_directory / (url.split("/")[-1]+'.html'), "w", encoding='utf-8') as file:
-            file.write(str(soup))
+    #     html_directory = self.results_directory / "html"
+    #     os.makedirs(html_directory, exist_ok=True)
+    #     with open(html_directory / (url.split("/")[-1]+'.html'), "w", encoding='utf-8') as file:
+    #         file.write(str(soup))
 
 
-        figures = soup.find_all('div', class_='img-tbl')
-        article_json = {}
-        figure_number = 1
+    #     figures = soup.find_all('div', class_='img-tbl')
+    #     article_json = {}
+    #     figure_number = 1
 
-        for figure in figures:
-            try:
-                image_url =  figure.find('a')['href']        
+    #     for figure in figures:
+    #         try:
+    #             image_url =  figure.find('a')['href']        
             
-            except:
-                img_tags = figure.find('img')['data-original']
-                image_url = 'https://pubs.rsc.org/' + img_tags
+    #         except:
+    #             img_tags = figure.find('img')['data-original']
+    #             image_url = 'https://pubs.rsc.org/' + img_tags
 
-            if image_url is not None:
-                self.driver.get(image_url)
+    #         if image_url is not None:
+    #             self.driver.get(image_url)
 
-            article_name = url.split("/"[-1])
-            figure_caption=  figure.find('figcaption').get_text(strip=True)
-            figure_name = article_name + "_fig" + str(figure_number) + ".png"
-            figure_path = (
-            pathlib.Path(self.search_query["name"])  / "figures" / figure_name
-            )
+    #         article_name = url.split("/"[-1])
+    #         figure_caption=  figure.find('figcaption').get_text(strip=True)
+    #         figure_name = article_name + "_fig" + str(figure_number) + ".png"
+    #         figure_path = (
+    #         pathlib.Path(self.search_query["name"])  / "figures" / figure_name
+    #         )
 
-            figure_json = {
-                "title": soup.find("title").get_text(),
-                "article_url": url,
-                "article_name": article_name,
-                "image_url": image_url,
-                "figure_name": figure_name,
-                "license": license,
-                "full_caption": figure_caption,
-                "caption_delimiter": "",
-                "figure_path": str(figure_path),
-                "master_images": [],
-                "unassigned": {
-                    "master_images": [],
-                    "dependent_images": [],
-                    "inset_images": [],
-                    "subfigure_labels": [],
-                    "scale_bar_labels": [],
-                    "scale_bar_lines": [],
-                    "captions": [],
-                },
-            }
+    #         figure_json = {
+    #             "title": soup.find("title").get_text(),
+    #             "article_url": url,
+    #             "article_name": article_name,
+    #             "image_url": image_url,
+    #             "figure_name": figure_name,
+    #             "license": license,
+    #             "full_caption": figure_caption,
+    #             "caption_delimiter": "",
+    #             "figure_path": str(figure_path),
+    #             "master_images": [],
+    #             "unassigned": {
+    #                 "master_images": [],
+    #                 "dependent_images": [],
+    #                 "inset_images": [],
+    #                 "subfigure_labels": [],
+    #                 "scale_bar_labels": [],
+    #                 "scale_bar_lines": [],
+    #                 "captions": [],
+    #             },
+    #         }
 
 
-            figures_directory = self.results_directory / "figures"
-            figure_path = os.path.join(figures_directory , figure_name)
+    #         figures_directory = self.results_directory / "figures"
+    #         figure_path = os.path.join(figures_directory , figure_name)
 
-            with open(figure_path, 'wb') as out_file:
-                time.sleep(3)
-                self.driver.save_screenshot(figure_path)
+    #         with open(figure_path, 'wb') as out_file:
+    #             time.sleep(3)
+    #             self.driver.save_screenshot(figure_path)
 
-                # Load the image
-                img = cv2.imread(figure_path, cv2.IMREAD_UNCHANGED)
+    #             # Load the image
+    #             img = cv2.imread(figure_path, cv2.IMREAD_UNCHANGED)
 
-                # Convert the image to RGBA (just in case the image is in another format)
-                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGBA)
+    #             # Convert the image to RGBA (just in case the image is in another format)
+    #             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGBA)
 
-                # Define a 2D filter that will turn black (also shades close to black) pixels to transparent
-                low = np.array([0, 0, 0, 0])
-                high = np.array([50, 50, 50, 255])
+    #             # Define a 2D filter that will turn black (also shades close to black) pixels to transparent
+    #             low = np.array([0, 0, 0, 0])
+    #             high = np.array([50, 50, 50, 255])
 
-                # Apply the mask (this will turn 'black' pixels to transparent)
-                mask = cv2.inRange(img, low, high)
-                img[mask > 0] = [0, 0, 0, 0]
+    #             # Apply the mask (this will turn 'black' pixels to transparent)
+    #             mask = cv2.inRange(img, low, high)
+    #             img[mask > 0] = [0, 0, 0, 0]
 
-                # Convert the image back to PIL format and save the result
-                img_pil = Image.fromarray(img)
-                img_pil.save(figure_path)
-                # print('image saved as: ' , figure_path)
-            article_json[figure_name] = figure_json
-            figure_number += 1
-        return article_json
+    #             # Convert the image back to PIL format and save the result
+    #             img_pil = Image.fromarray(img)
+    #             img_pil.save(figure_path)
+    #             # print('image saved as: ' , figure_path)
+    #         article_json[figure_name] = figure_json
+    #         figure_number += 1
+    #     return article_json
 
 
 
