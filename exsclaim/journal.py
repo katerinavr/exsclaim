@@ -1415,6 +1415,41 @@ class RSC(JournalFamilyDynamic):
         #totalPages = 1
         return int(page), int(totalPages), int(totalResults)
 
+
+    def get_articles_from_search_url(self, search_url: str) -> list:
+        """Generates a list of articles from a single search term"""
+        max_scraped = self.search_query["maximum_scraped"]
+        self.logger.info("GET request: {}".format(search_url))
+        soup = self.get_soup_from_request(search_url)
+        start_page, stop_page, total_articles = self.get_page_info(soup)
+        article_paths = set()
+        for page_number in range(start_page, stop_page + 1):
+            for tag in soup.find_all("a", href=True):
+                url = tag.attrs["href"]
+                self.logger.debug("Candidate Article: {}".format(url))
+                if (
+                    self.articles_path not in url
+                    or url.count("/") != self.articles_path_length
+                ):
+                    # The url does not point to an article
+                    continue
+                if url.split("/")[-1] in self.articles_visited or (
+                    self.open and not self.is_link_to_open_article(tag)
+                ):
+                    # It is an article but we are not interested
+                    continue
+                self.logger.debug("Candidate Article: PASS")
+                article_paths.add(url)
+                if len(article_paths) >= max_scraped:
+                    return article_paths
+                
+            # Get next page at end of loop since page 1 is obtained from
+            element = self.driver.find_element(By.CSS_SELECTOR, ".paging__btn.paging__btn--next")            
+            self.driver.execute_script("arguments[0].click();", element)
+            soup = BeautifulSoup(self.driver.page_source, 'html.parser')
+        return article_paths
+
+
     def turn_page(self, url, pg_size):
         return url.split('1&tab=all')[0]+str(pg_size)+'&tab=all&fcategory=all&filter=all&Article%20Access=Open+Access'
 
