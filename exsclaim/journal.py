@@ -23,6 +23,9 @@ try:
     from selenium.webdriver.support import expected_conditions as EC
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.chrome.service import Service
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.support import expected_conditions as EC
 
 except ImportError:
     pass
@@ -1444,8 +1447,10 @@ class RSC(JournalFamilyDynamic):
                     return article_paths
                 
             # Get next page at end of loop since page 1 is obtained from
-            element = self.driver.find_element(By.CSS_SELECTOR, ".paging__btn.paging__btn--next")            
+            element = self.driver.find_element(By.CSS_SELECTOR, ".paging__btn.paging__btn--next")
+            time.sleep(10)              
             self.driver.execute_script("arguments[0].click();", element)
+            time.sleep(10)  
             soup = BeautifulSoup(self.driver.page_source, 'html.parser')
         return article_paths
 
