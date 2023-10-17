@@ -857,13 +857,9 @@ class ACS(JournalFamilyDynamic):
             self.logger.info("GET request: {}".format(url))
             
             options = webdriver.ChromeOptions() 
-            options.add_argument("--no-sandbox") #bypass OS security model
-            options.add_argument("--disable-dev-shm-usage") #overcome limited resource problems
-            options.add_argument('--headless')
-            
-            #options.add_argument("start-maximized")
-            #options.add_experimental_option("excludeSwitches", ["enable-automation"])
-            #options.add_experimental_option('useAutomationExtension', False)
+            options.add_argument("--no-sandbox") 
+            options.add_argument("--disable-dev-shm-usage") 
+            options.add_argument('--headless')            
             options.binary_location = "/gpfs/fs1/home/avriza/chrome/opt/google/chrome/google-chrome"
             driver = webdriver.Chrome(service=Service('/gpfs/fs1/home/avriza/chromedriver'), options=options)
     
@@ -875,16 +871,14 @@ class ACS(JournalFamilyDynamic):
                   renderer="Intel Iris OpenGL Engine",
                   fix_hairline=True,
                   )
-            #print('journal url', url)
+
             driver.get(url)
             soup = BeautifulSoup(driver.page_source, 'html.parser')
-            #print(soup, 'soup')
-            
+          
             wait_time = float(random.randint(0, 50))
             time.sleep(wait_time / float(10))
-            #self.driver.close()
             start_page, stop_page, total_articles = self.get_page_info(url)
-            #print('search url', search_url)
+
             article_paths = set()
             
             #raise NameError(
@@ -921,10 +915,11 @@ class ACS(JournalFamilyDynamic):
                         return article_paths
                 # Get next page at end of loop since page 1 is obtained from
                 # search_url
-                search_url = self.turn_page(search_url, page_number + 1)
-                #print('new search url', search_url)
-            print('article_paths', article_paths)
+                search_url = self.turn_page(url, page_number + 1)
+                driver.get(search_url)
+                soup = BeautifulSoup(driver.page_source, 'html.parser')
             return article_paths
+
 
     def get_article_figures(self, url):
         """
