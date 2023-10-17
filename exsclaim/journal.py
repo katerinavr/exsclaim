@@ -456,7 +456,7 @@ class JournalFamily(ABC):
                 figure_caption += caption.get_text()
 
             image_url = self.get_figure_url(figure_subtree)
-            # image_url = self.prepend + image_url.replace('_hi-res','')
+            image_url = self.prepend + image_url #.replace('_hi-res','')
             if ":" not in image_url:
                 image_url = "https:" + image_url
             article_name = url.split("/")[-1].split("?")[0]
