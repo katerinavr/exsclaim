@@ -1422,37 +1422,80 @@ class RSC(JournalFamilyDynamic):
     def get_articles_from_search_url(self, search_url: str) -> list:
         """Generates a list of articles from a single search term"""
         max_scraped = self.search_query["maximum_scraped"]
-        self.logger.info("GET request: {}".format(search_url))
-        soup = self.get_soup_from_request(search_url)
-        start_page, stop_page, total_articles = self.get_page_info(soup)
+        #self.logger.info("GET request: {}".format(search_url))
+        self.driver.get(search_url)
+        
+        wait_time = float(random.randint(0, 50))
+        time.sleep(wait_time / float(10))
+        #self.driver.close()
+        start_page, stop_page, total_articles = self.get_page_info(search_url)
+        #print('search url', search_url)
         article_paths = set()
+        soup = BeautifulSoup(self.driver.page_source, 'html.parser')
+
         for page_number in range(start_page, stop_page + 1):
+            
+            #print(soup.find_all("a", href=True))
             for tag in soup.find_all("a", href=True):
-                url = tag.attrs["href"]
-                self.logger.debug("Candidate Article: {}".format(url))
-                if (
-                    self.articles_path not in url
-                    or url.count("/") != self.articles_path_length
-                ):
-                    # The url does not point to an article
-                    continue
+                url = tag.attrs['href']
+                url = url.split('?page=search')[0]
                 if url.split("/")[-1] in self.articles_visited or (
                     self.open and not self.is_link_to_open_article(tag)
                 ):
                     # It is an article but we are not interested
                     continue
-                self.logger.debug("Candidate Article: PASS")
-                article_paths.add(url)
+                #self.logger.debug("Candidate Article: PASS")
+                if url.startswith('/doi/full/') == True:
+                    article_paths.add(url)
+                if url.startswith('/en/content/articlehtml/') == True:
+                    article_paths.add(url)
                 if len(article_paths) >= max_scraped:
                     return article_paths
-                
             # Get next page at end of loop since page 1 is obtained from
+            # search_url
+            #search_url = self.turn_page(search_url, page_number + 1)
+            #try:
             element = self.driver.find_element(By.CSS_SELECTOR, ".paging__btn.paging__btn--next")
-            time.sleep(10)              
+            time.sleep(10)            
             self.driver.execute_script("arguments[0].click();", element)
-            time.sleep(10)  
+            time.sleep(10)   
             soup = BeautifulSoup(self.driver.page_source, 'html.parser')
         return article_paths
+
+    # def get_articles_from_search_url(self, search_url: str) -> list:
+    #     """Generates a list of articles from a single search term"""
+    #     max_scraped = self.search_query["maximum_scraped"]
+    #     self.logger.info("GET request: {}".format(search_url))
+    #     soup = self.get_soup_from_request(search_url)
+    #     start_page, stop_page, total_articles = self.get_page_info(soup)
+    #     article_paths = set()
+    #     for page_number in range(start_page, stop_page + 1):
+    #         for tag in soup.find_all("a", href=True):
+    #             url = tag.attrs["href"]
+    #             self.logger.debug("Candidate Article: {}".format(url))
+    #             if (
+    #                 self.articles_path not in url
+    #                 or url.count("/") != self.articles_path_length
+    #             ):
+    #                 # The url does not point to an article
+    #                 continue
+    #             if url.split("/")[-1] in self.articles_visited or (
+    #                 self.open and not self.is_link_to_open_article(tag)
+    #             ):
+    #                 # It is an article but we are not interested
+    #                 continue
+    #             self.logger.debug("Candidate Article: PASS")
+    #             article_paths.add(url)
+    #             if len(article_paths) >= max_scraped:
+    #                 return article_paths
+                
+    #         # Get next page at end of loop since page 1 is obtained from
+    #         element = self.driver.find_element(By.CSS_SELECTOR, ".paging__btn.paging__btn--next")
+    #         time.sleep(10)              
+    #         self.driver.execute_script("arguments[0].click();", element)
+    #         time.sleep(10)  
+    #         soup = BeautifulSoup(self.driver.page_source, 'html.parser')
+    #     return article_paths
 
 
     def turn_page(self, url, pg_size):
