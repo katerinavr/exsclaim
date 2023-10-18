@@ -13,6 +13,7 @@ from langchain.chat_models import ChatOpenAI
 import openai
 import re
 import os
+import time
 
 def get_context(query, documents, embeddings):
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=2048, chunk_overlap=100)
