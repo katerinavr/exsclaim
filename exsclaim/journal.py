@@ -30,7 +30,6 @@ try:
 except ImportError:
     pass
 
-from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 
 from .utilities import paths

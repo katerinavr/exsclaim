@@ -45,7 +45,6 @@ try:
 except:
     pass
 
-from selenium.webdriver.chrome.options import Options
 
 class ExsclaimTool(ABC):
     def __init__(self, search_query):
