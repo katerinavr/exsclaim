@@ -30,6 +30,7 @@ try:
 except ImportError:
     pass
 
+from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 
 from .utilities import paths
@@ -1739,107 +1740,107 @@ class Wiley(JournalFamily):
         return super().get_soup_from_request(url)
 
 
-class SoftMatter(JournalFamily):
-    domain = "https://pubs.rsc.org"
-    search_path = "/en/journals/journal/SM"
-    page_param = "startPage="
-    max_page_size = "50"  # Limit of articles per page
-    term_param = "searchtext="
-    order_param = "sortby="
-    open_param = ""
-    date_range_param = "date="
-    journal_param = "journalcode="
-    pub_type = ""
-    author_param = "author="
+# class SoftMatter(JournalFamily):
+#     domain = "https://pubs.rsc.org"
+#     search_path = "/en/journals/journal/SM"
+#     page_param = "startPage="
+#     max_page_size = "50"  # Limit of articles per page
+#     term_param = "searchtext="
+#     order_param = "sortby="
+#     open_param = ""
+#     date_range_param = "date="
+#     journal_param = "journalcode="
+#     pub_type = ""
+#     author_param = "author="
     
-    # Order options for the Soft Matter journal
-    order_values = {
-        "relevant": "relevance",
-        "recent": "date",
-        "old": "date_asc"
-    }
+#     # Order options for the Soft Matter journal
+#     order_values = {
+#         "relevant": "relevance",
+#         "recent": "date",
+#         "old": "date_asc"
+#     }
 
-    join = "+"  # How terms are joined in the URL for queries
-    articles_path = "/en/content/articlehtml/"
-    articles_path_length = 3
-    prepend = ""
-    extra_key = ""
-    max_query_results = 500  # Example max query result limit for Soft Matter
+#     join = "+"  # How terms are joined in the URL for queries
+#     articles_path = "/en/content/articlehtml/"
+#     articles_path_length = 3
+#     prepend = ""
+#     extra_key = ""
+#     max_query_results = 500  # Example max query result limit for Soft Matter
 
-    # Codes for Soft Matter journal (in this case, we assume only one)
-    materials_journals = [
-        "SM"  # Journal code for Soft Matter
-    ]
+#     # Codes for Soft Matter journal (in this case, we assume only one)
+#     materials_journals = [
+#         "SM"  # Journal code for Soft Matter
+#     ]
 
-    def find_captions(self, figure_subtree: BeautifulSoup):
-        return super().find_captions(figure_subtree)
+#     def find_captions(self, figure_subtree: BeautifulSoup):
+#         return super().find_captions(figure_subtree)
 
-    def get_figure_subtrees(self, soup: BeautifulSoup) -> list:
-        return super().get_figure_subtrees(soup)
+#     def get_figure_subtrees(self, soup: BeautifulSoup) -> list:
+#         return super().get_figure_subtrees(soup)
 
-    def get_figure_url(self, figure_subtree: BeautifulSoup) -> str:
-        return super().get_figure_url(figure_subtree)
+#     def get_figure_url(self, figure_subtree: BeautifulSoup) -> str:
+#         return super().get_figure_url(figure_subtree)
 
-    def get_soup_from_request(self, url: str) -> BeautifulSoup:
-        return super().get_soup_from_request(url)
+#     def get_soup_from_request(self, url: str) -> BeautifulSoup:
+#         return super().get_soup_from_request(url)
 
-    def save_figure(self, figure_name: str, image_url: str):
-        return super().save_figure(figure_name, image_url)
+#     def save_figure(self, figure_name: str, image_url: str):
+#         return super().save_figure(figure_name, image_url)
 
-    def turn_page(self, url: str, page_number: int) -> BeautifulSoup:
-        return super().turn_page(url, page_number)
+#     def turn_page(self, url: str, page_number: int) -> BeautifulSoup:
+#         return super().turn_page(url, page_number)
 
-    def get_page_info(self, soup):
-        # Similar implementation to parse pagination info for Soft Matter
-        try:
-            current_page = int(soup.find("li", class_="currentPage").text.strip())
-            pages = soup.find_all("li", class_="pagination")
-            total_pages = int(pages[-2].text.strip())
-            total_results = int(soup.find("span", class_="results-count").text.split()[-2])
-            return current_page, total_pages, total_results
-        except Exception as e:
-            print(f"Error parsing page info: {e}")
-            return 1, 1, 0  # Default values if parsing fails
+#     def get_page_info(self, soup):
+#         # Similar implementation to parse pagination info for Soft Matter
+#         try:
+#             current_page = int(soup.find("li", class_="currentPage").text.strip())
+#             pages = soup.find_all("li", class_="pagination")
+#             total_pages = int(pages[-2].text.strip())
+#             total_results = int(soup.find("span", class_="results-count").text.split()[-2])
+#             return current_page, total_pages, total_results
+#         except Exception as e:
+#             print(f"Error parsing page info: {e}")
+#             return 1, 1, 0  # Default values if parsing fails
 
-    def get_additional_url_arguments(self, soup):
-        current_year = datetime.now().year
-        earliest_year = 1999  # Soft Matter journal began around 1999
-        non_exhaustive_years = 25
+#     def get_additional_url_arguments(self, soup):
+#         current_year = datetime.now().year
+#         earliest_year = 1999  # Soft Matter journal began around 1999
+#         non_exhaustive_years = 25
 
-        if self.order == "exhaustive":
-            journal_codes = self.materials_journals
-            years = [
-                str(year) + "-" + str(year)
-                for year in range(current_year, earliest_year, -1)
-            ]
-            orderings = list(self.order_values.values())
-        else:
-            journal_codes = self.materials_journals
-            years = [
-                str(year) + "-" + str(year)
-                for year in range(current_year - non_exhaustive_years, current_year)
-            ]
-            orderings = [self.order_values[self.order]]
+#         if self.order == "exhaustive":
+#             journal_codes = self.materials_journals
+#             years = [
+#                 str(year) + "-" + str(year)
+#                 for year in range(current_year, earliest_year, -1)
+#             ]
+#             orderings = list(self.order_values.values())
+#         else:
+#             journal_codes = self.materials_journals
+#             years = [
+#                 str(year) + "-" + str(year)
+#                 for year in range(current_year - non_exhaustive_years, current_year)
+#             ]
+#             orderings = [self.order_values[self.order]]
 
-        years = [""] + years
-        return years, journal_codes, orderings
+#         years = [""] + years
+#         return years, journal_codes, orderings
 
-    def get_license(self, soup):
-        try:
-            # Extract license and open access info from the soup (Soft Matter style)
-            is_open = bool(soup.find("span", class_="open-access"))
-            license_tag = soup.find("span", class_="license-type")
-            license = license_tag.text if license_tag else "unknown"
-            return is_open, license
-        except Exception as e:
-            print(f"Error fetching license: {e}")
-            return False, "unknown"
+#     def get_license(self, soup):
+#         try:
+#             # Extract license and open access info from the soup (Soft Matter style)
+#             is_open = bool(soup.find("span", class_="open-access"))
+#             license_tag = soup.find("span", class_="license-type")
+#             license = license_tag.text if license_tag else "unknown"
+#             return is_open, license
+#         except Exception as e:
+#             print(f"Error fetching license: {e}")
+#             return False, "unknown"
 
-    def is_link_to_open_article(self, tag):
-        current_tag = tag
-        while current_tag.parent:
-            if "article" in current_tag.get("class", []):
-                break
-            current_tag = current_tag.parent
-        candidates = current_tag.find_all("span", class_="open-access")
-        return bool(candidates)
+#     def is_link_to_open_article(self, tag):
+#         current_tag = tag
+#         while current_tag.parent:
+#             if "article" in current_tag.get("class", []):
+#                 break
+#             current_tag = current_tag.parent
+#         candidates = current_tag.find_all("span", class_="open-access")
+#         return bool(candidates)
